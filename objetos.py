@@ -32,17 +32,19 @@ tile_size = 60
 
 # mapa do jogo
 mapa = [
-    [0,0,0,0,0,0,0,0,0,0,0],
-    [1, 1, 1, 0, 1, 1,1,1,1,1,1],
-    [0, 0, 1, 0, 1, 1,1,0,0,0,1],
-    [0, 1, 1, 0, 1, 1,1,0,1,1,1],
-    [0, 1, 1, 0, 0, 0,1,0,0,1,1],
-    [1, 1, 0, 0, 1, 1,1,1,0,1,1],
-    [0, 1, 0, 1, 1, 1,1,0,0,1,1],
-    [0, 0, 0, 0, 0, 0,0,0,1,1,1]
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1],
+    [0, 0, 1, 0, 1, 1, 1, 0, 0, 0, 1],
+    [0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1],
+    [0, 1, 1, 0, 0, 0, 1, 0, 0, 1, 1],
+    [1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1],
+    [0, 1, 0, 1, 1, 1, 1, 0, 0, 1, 1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1]
 ]
 
 # tudo que tem uma funcionalidade
+
+
 class Objetos():
     def __init__(self, image, x, y, scale):
         self.imagem = image
@@ -71,9 +73,9 @@ class Objetos():
             if pygame.mouse.get_pressed()[0] == 0:
                 self.cliquei = False
         return action
-    
+
     def andar(self):
-        #fazendo o personagem andar e fazendo a animação dele
+        # fazendo o personagem andar e fazendo a animação dele
         self.valor_x = 0
         self.valor_y = 0
         if pygame.key.get_pressed()[K_LEFT] or pygame.key.get_pressed()[K_a]:
@@ -85,7 +87,7 @@ class Objetos():
         if pygame.key.get_pressed()[K_UP] or pygame.key.get_pressed()[K_w]:
             self.valor_y = -constantes.VELOCIDADE
             self.valor_x = 0
-        if pygame.key.get_pressed()[K_DOWN]or pygame.key.get_pressed()[K_s]:
+        if pygame.key.get_pressed()[K_DOWN] or pygame.key.get_pressed()[K_s]:
             self.valor_y = constantes.VELOCIDADE
             self.valor_x = 0
         self.rect.x += self.valor_x
@@ -112,7 +114,7 @@ def Menu():
     if menu_state == "main":
         # draw screen buttons
         if botao_jogar.apertar():
-            tema_galaxia.jogo()
+            tema_galaxia.update()
         if botao_regras.apertar():
             menu_state = "options"
         if botao_sair.apertar():
@@ -151,7 +153,8 @@ class Labirinto():
             col_count = 0
             for tile in row:
                 if tile == 1:
-                    img = pygame.transform.scale(self.bloco, (tile_size, tile_size))
+                    img = pygame.transform.scale(
+                        self.bloco, (tile_size, tile_size))
                     img_rect = img.get_rect()
                     img_rect.x = col_count * tile_size
                     img_rect.y = row_count * tile_size
@@ -164,6 +167,37 @@ class Labirinto():
         # desenhando o labirinto
         for tile in self.tile_list:
             tela.blit(tile[0], tile[1])
+        
+    def collision_teste(self):
+        #testando a colisão com os tiles
+        #o que estavamos fazendo errado é que estavamos testando a colisão e fazendo colidir tudo junto
+        #esse jeito aqui debaixo é mais fácil
+        collisions = []
+        for tile in self.tile_list:
+            if tile[1].colliderect(anne.rect):
+                collisions.append(tile[1])
+        return collisions
+
+    def movement_collision(self):
+        directionx = anne.valor_x
+        directiony = anne.valor_y
+
+        #recebe uma lista com as colisões
+        colisao = self.collision_teste()
+
+        #para cada tile na colisão
+        for tile in colisao:
+            #se o valor que faz ela andar for maior que 0
+            if directionx > 0:
+                #o lado direito dela recebe o lado esquerdo do tile
+                anne.rect.right = tile.left
+            if directionx < 0:
+                anne.rect.left = tile.right
+        for tile in colisao:
+            if directiony > 0:  
+                anne.rect.bottom = tile.top
+            if directiony < 0:
+                anne.rect.top = tile.bottom  
 
     def jogo(self):
         self.jogando = True
@@ -173,11 +207,15 @@ class Labirinto():
             tela.blit(self.mapa, (0, 0))
             self.draw()
             anne.update()
+            self.movement_collision()
             for i in range(1, 10):
-                #print("oi")
+                # print("oi")
                 if i == 10:
                     self.jogando = False
             pygame.display.flip()
+
+    def update(self):
+        self.jogo()
 
 
 # objetos das classes mapas
@@ -189,7 +227,7 @@ botao_jogar = Objetos(jogar_img, 250, 180, 1)
 botao_regras = Objetos(regras_img, 240, 230, 1)
 botao_sair = Objetos(sair_img, 265, 280, 1)
 botao_flecha = Objetos(anne_img, 8, 410, 3)
-anne = Objetos(anne_img, 180, 80, 2)
+anne = Objetos(anne_img, 180, 80, 1)
 
 """                            terra = pygame.image.load("sprites/terra.webp")
         self.tile_list = []
@@ -208,7 +246,7 @@ anne = Objetos(anne_img, 180, 80, 2)
             row_count += 1
 
     def draw(self):
-        #desenhando o labirinto
+        # desenhando o labirinto
         for tile in self.tile_list:
             tela.blit(tile[0], tile[1])"""
 
