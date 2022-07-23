@@ -52,7 +52,7 @@ mapa = [
  [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
  [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
  [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
- [2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
  [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
@@ -95,17 +95,17 @@ class Objetos():
         self.valor_x = 0
         self.valor_y = 0
         if pygame.key.get_pressed()[K_LEFT] or pygame.key.get_pressed()[K_a]:
-            self.valor_x = -constantes.VELOCIDADE
-            self.valor_y = 0
+            if self.rect.x > 0:
+                self.valor_x = -constantes.VELOCIDADE
         if pygame.key.get_pressed()[K_RIGHT] or pygame.key.get_pressed()[K_d]:
-            self.valor_x = constantes.VELOCIDADE
-            self.valor_y = 0
+            if self.rect.x < (constantes.LARGURA - 30):
+                self.valor_x = constantes.VELOCIDADE
         if pygame.key.get_pressed()[K_UP] or pygame.key.get_pressed()[K_w]:
-            self.valor_y = -constantes.VELOCIDADE
-            self.valor_x = 0
+            if self.rect.y > 0:
+                self.valor_y = -constantes.VELOCIDADE
         if pygame.key.get_pressed()[K_DOWN] or pygame.key.get_pressed()[K_s]:
-            self.valor_y = constantes.VELOCIDADE
-            self.valor_x = 0
+            if self.rect.y < (constantes.ALTURA - 35):
+                self.valor_y = constantes.VELOCIDADE
         self.rect.x += self.valor_x
         self.rect.y += self.valor_y
 
@@ -163,7 +163,7 @@ class Labirinto():
         self.bloco = bloco
         self.mapa = imagem
         self.tile_list = []
-        buraco_negro = pygame.image.load("sprites/buraconegro.png")
+        #buraco_negro = pygame.image.load("sprites/buraconegro.png")
         row_count = 0
         for row in data:
             col_count = 0
@@ -176,17 +176,9 @@ class Labirinto():
                     img_rect.y = row_count * tile_size
                     tile = (img, img_rect)
                     self.tile_list.append(tile)
-                if tile == 2:
-                    img = pygame.transform.scale(
-                                    buraco_negro, (100, 100))
-                    img_rect = buraco_negro.get_rect()
-                    img_rect.x = col_count * tile_size
-                    img_rect.y = row_count * tile_size
-                    tile = (img, img_rect)
-                    self.tile_list.append(tile)
                 col_count += 1
             row_count += 1
-
+    
     def draw(self):
         # desenhando o labirinto
         for tile in self.tile_list:
@@ -291,3 +283,15 @@ anne = Objetos(anne_img, 180, 80, 1)
  if event.type == QUIT:
  pygame.quit()
  pygame.display.update()"""
+
+
+"""if tile == 2:
+img = pygame.transform.scale(
+buraco_negro, (100, 100))
+img_rect = buraco_negro.get_rect()
+img_rect.x = col_count * tile_size
+img_rect.y = row_count * tile_size
+tile = (img, img_rect)
+self.tile_list.append(tile)
+col_count += 1row_count += 1
+"""
