@@ -7,10 +7,10 @@ ALTURA = 480
 TITULO_JOGO = "LOZZALI"
 
 #FPS
-FPS = 30
+FPS = 60
 
 #cores
 PRETO = (0,0,0)
 
 #velocidade da personagem 
-VELOCIDADE = 2
+VELOCIDADE = 1
