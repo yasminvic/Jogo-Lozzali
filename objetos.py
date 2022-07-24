@@ -26,7 +26,7 @@ jogar_img = sprite_sheet_palavras.subsurface((0, 0), (186, 32))
 regras_img = sprite_sheet_palavras.subsurface((186, 0), (186, 32))
 sair_img = sprite_sheet_palavras.subsurface((372, 0), (186, 32))
 flecha_img = pygame.image.load("sprites/flecha.gif")
-mapa_galaxia = pygame.image.load("sprites/telaestaticaGALAXIA.gif")
+mapa_galaxia = pygame.image.load("sprites/telaestaticaGALAXIA.png")
 estrela_obstaculo = pygame.image.load("sprites/estrela (1).png")
 anne_img = pygame.image.load("sprites/anne.png")
 
