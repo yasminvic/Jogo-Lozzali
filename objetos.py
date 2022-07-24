@@ -18,14 +18,18 @@ tela = pygame.display.set_mode((constantes.LARGURA, constantes.ALTURA))
 # carregar imagens
 menu_img = pygame.image.load("sprites/menu.png")
 # se a imagem for transparente, o convert alpha conserva isso
-sprite_sheet = pygame.image.load("sprites/menu_palavra.png")
-jogar_img = sprite_sheet.subsurface((0, 0), (186, 32))
-regras_img = sprite_sheet.subsurface((186, 0), (186, 32))
-sair_img = sprite_sheet.subsurface((372, 0), (186, 32))
+sprite_sheet_naoverbal = pygame.image.load("sprites/nao_verbal.png")
+pause_img = sprite_sheet_naoverbal.subsurface((160,0), (32, 32))
+home_img = sprite_sheet_naoverbal.subsurface((96, 0), (32,32))
+sprite_sheet_palavras = pygame.image.load("sprites/menu_palavra.png")
+jogar_img = sprite_sheet_palavras.subsurface((0, 0), (186, 32))
+regras_img = sprite_sheet_palavras.subsurface((186, 0), (186, 32))
+sair_img = sprite_sheet_palavras.subsurface((372, 0), (186, 32))
 flecha_img = pygame.image.load("sprites/flecha.gif")
 mapa_galaxia = pygame.image.load("sprites/telaestaticaGALAXIA.gif")
 estrela_obstaculo = pygame.image.load("sprites/estrela (1).png")
 anne_img = pygame.image.load("sprites/anne.png")
+
 
 tile_size = 20
 
@@ -97,15 +101,19 @@ class Objetos():
         if pygame.key.get_pressed()[K_LEFT] or pygame.key.get_pressed()[K_a]:
             if self.rect.x > 0:
                 self.valor_x = -constantes.VELOCIDADE
+                self.valor_y = 0
         if pygame.key.get_pressed()[K_RIGHT] or pygame.key.get_pressed()[K_d]:
             if self.rect.x < (constantes.LARGURA - 30):
                 self.valor_x = constantes.VELOCIDADE
+                self.valor_y = 0
         if pygame.key.get_pressed()[K_UP] or pygame.key.get_pressed()[K_w]:
-            if self.rect.y > 0:
+            if self.rect.y > (constantes.ALTURA - 410):
                 self.valor_y = -constantes.VELOCIDADE
+                self.valor_x = 0
         if pygame.key.get_pressed()[K_DOWN] or pygame.key.get_pressed()[K_s]:
             if self.rect.y < (constantes.ALTURA - 35):
                 self.valor_y = constantes.VELOCIDADE
+                self.valor_x = 0
         self.rect.x += self.valor_x
         self.rect.y += self.valor_y
 
@@ -139,8 +147,8 @@ def Menu():
     # check if the options menu is open
     if menu_state == "options":
         # inicia o loop
-        jogando = True
-        while jogando:
+        tela_regras = True
+        while tela_regras:
         # preenche tudo de preto
             tela.fill((0, 0, 0))
             eventos()
@@ -214,6 +222,23 @@ class Labirinto():
                 anne.rect.bottom = tile.top
             if directiony < 0:
                 anne.rect.top = tile.bottom 
+    
+    def paused(self):
+        pause = True
+        while pause:
+            eventos()
+            tela.fill(constantes.CINZA)
+            if botao_jogar.apertar():
+                pause = False
+            if botao_sair.apertar():
+                pygame.quit()
+                exit()
+            pygame.display.flip()
+    
+    def reiniciar(self):
+        anne.rect.x = 180
+        anne.rect.y = 80
+
 
     def jogo(self):
         self.jogando = True
@@ -223,6 +248,11 @@ class Labirinto():
             tela.blit(self.mapa, (0, 0))
             self.draw()
             anne.update()
+            if botao_pause.apertar():
+                self.paused()
+            if botao_home.apertar():
+                self.reiniciar()
+                self.jogando = False   
             self.movement_collision()
             for i in range(1, 10):
                 # print("oi")
@@ -243,6 +273,8 @@ botao_jogar = Objetos(jogar_img, 250, 180, 1)
 botao_regras = Objetos(regras_img, 240, 230, 1)
 botao_sair = Objetos(sair_img, 265, 280, 1)
 botao_flecha = Objetos(flecha_img, 8, 410, 3)
+botao_pause = Objetos(pause_img, 10, 0, 2)
+botao_home = Objetos(home_img, 65, 0, 2)
 anne = Objetos(anne_img, 180, 80, 1)
 
 """ terra = pygame.image.load("sprites/terra.webp")
