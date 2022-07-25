@@ -139,11 +139,8 @@ def Menu():
             if botao_flecha.apertar():
                 # volta para o menu principal
                 menu_state = "main"
+                tela_regras = False
             # inicia o loop que faz tudo de novo, doideira né nem sabia que dava de fazer isso
-                while True:
-                    Menu()
-                    eventos()
-                    pygame.display.flip()
             pygame.display.flip()
 
 
@@ -154,7 +151,6 @@ class Labirinto():
         self.bloco = bloco
         self.mapa = imagem
         self.tile_list = []
-        #buraco_negro = pygame.image.load("sprites/buraconegro.png")
         row_count = 0
         for row in data:
             col_count = 0
@@ -205,6 +201,12 @@ class Labirinto():
                 anne.rect.bottom = tile.top
             if directiony < 0:
                 anne.rect.top = tile.bottom 
+
+            
+    def colisaoBuraco(self):
+        if buraco_negro.rect.colliderect(anne.rect):
+            anne.rect.x = 550
+            anne.rect.y = 120
     
     def paused(self):
         pause = True
@@ -230,7 +232,9 @@ class Labirinto():
             tela.fill(constantes.PRETO)
             tela.blit(self.mapa, (0, 0))
             self.draw()
+            buraco_negro.draw()
             anne.update()
+            self.colisaoBuraco()
             if botao_pause.apertar():
                 self.paused()
             if botao_home.apertar():
@@ -258,6 +262,7 @@ botao_sair = Objetos(sprite.sair_img, 265, 280, 1)
 botao_flecha = Objetos(sprite.flecha_img, 8, 410, 3)
 botao_pause = Objetos(sprite.pause_img, 10, 0, 2)
 botao_home = Objetos(sprite.home_img, 65, 0, 2)
+buraco_negro = Objetos(sprite.buraconegro, 15, 410, 2)
 anne = Objetos(sprite.anne_img, 180, 80, 1)
 
 """ terra = pygame.image.load("sprites/terra.webp")
