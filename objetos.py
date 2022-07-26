@@ -26,15 +26,15 @@ mapa = [
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
  [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
  [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
  [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0],
  [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
  [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
- [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
- [0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
+ [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
  [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
@@ -147,8 +147,9 @@ def Menu():
 
 # faz os osbtáculos, constrói os mapas e personagem
 class Labirinto():
-    def __init__(self, data, bloco, tile_size, imagem, canhao, bola, total_vidas):
+    def __init__(self, data, bloco, tile_size, imagem, total_vidas, canhao, bola):
     # criando o labirinto
+        self.data = data
         self.bloco = bloco
         self.mapa = imagem
         self.canhao = canhao
@@ -156,7 +157,7 @@ class Labirinto():
         self.total_vidas = total_vidas
         self.tile_list = []
         row_count = 0
-        for row in data:
+        for row in self.data:
             col_count = 0
             for tile in row:
                 if tile == 1:
@@ -165,7 +166,23 @@ class Labirinto():
                     img_rect = img.get_rect()
                     img_rect.x = col_count * tile_size
                     img_rect.y = row_count * tile_size
-                    tile = (img, img_rect)
+                    tile = (img, img_rect, 1)
+                    self.tile_list.append(tile)
+                if tile == 2:
+                    img = pygame.transform.scale(
+                                self.canhao, (tile_size*1.5, tile_size*1.5))
+                    img_rect = img.get_rect()
+                    img_rect.x = col_count * tile_size
+                    img_rect.y = row_count * tile_size
+                    tile = (img, img_rect, 2)
+                    self.tile_list.append(tile)
+                if tile == 3:
+                    img = pygame.transform.scale(
+                                self.bola, (tile_size*1.5, tile_size*1.5))
+                    img_rect = img.get_rect()
+                    img_rect.x = col_count * tile_size
+                    img_rect.y = row_count * tile_size
+                    tile = (img, img_rect, 3)
                     self.tile_list.append(tile)
                 col_count += 1
             row_count += 1
@@ -213,13 +230,21 @@ class Labirinto():
             anne.rect.y = 120
 
     def canhaoAtira(self):
-        self.canhao.draw()
-        self.bola.draw()
-        if self.bola.rect.y < constantes.ALTURA:
+        for tile in self.tile_list:
+            if tile[2] == 2:
+                self.bola_y = tile[1].y
+        for tile in self.tile_list:
+            if tile[2] == 3:
+                if tile[1].y < constantes.ALTURA:
+                    tile[1].y += constantes.VELOCIDADE
+                else:
+                    tile[1].y = self.bola_y
+        """if self.bola.rect.y < constantes.ALTURA:
             self.bola.rect.y += 1 
         else:
-            self.bola.rect.y = 260
-    
+            self.bola.rect.y = self.canhao2.rect.y +10"""
+
+        
     def imprimirVidas(self):
         fonte = pygame.font.SysFont("Times New Roman", 40, True, True)
         mensagem = f"Vidas: {self.total_vidas}" #string formatada
@@ -229,9 +254,15 @@ class Labirinto():
     
     def perdeu(self):
         self.imprimirVidas()
-        if self.bola.rect.colliderect(anne.rect):
-            self.total_vidas -= 0.1
-
+        for tile in self.tile_list:
+            if tile[2] == 3:
+                if tile[1].colliderect(anne.rect):
+                    self.total_vidas -= 1
+        if self.total_vidas == 0:
+            self.jogando = False
+        else:
+            pass
+ 
     
     def paused(self):
         pause = True
@@ -248,7 +279,6 @@ class Labirinto():
     def reiniciar(self):
         anne.rect.x = 180
         anne.rect.y = 80
-        self.bola.rect.y = 260
         self.total_vidas = 3
 
 
@@ -276,6 +306,7 @@ class Labirinto():
             pygame.display.flip()
 
     def update(self):
+        self.reiniciar()
         self.jogo()
 
 
@@ -287,12 +318,10 @@ botao_flecha = Objetos(sprite.flecha_img, 8, 410, 3)
 botao_pause = Objetos(sprite.pause_img, 10, 0, 2)
 botao_home = Objetos(sprite.home_img, 65, 0, 2)
 buraco_negro = Objetos(sprite.buraconegro, 15, 410, 2)
-canhao = Objetos(sprite.canhao_img, 350, 230, 1.5)
-bola_fogo = Objetos(sprite.fogo_img, 360, 260, 1)
 anne = Objetos(sprite.anne_img, 180, 80, 1)
 
 # objetos das classes mapas
-tema_galaxia = Labirinto(mapa, sprite.estrela_obstaculo, tile_size, sprite.mapa_galaxia, canhao, bola_fogo, total_vidas)
+tema_galaxia = Labirinto(mapa, sprite.estrela_obstaculo, tile_size, sprite.mapa_galaxia, total_vidas, sprite.canhao_img, sprite.fogo_img)
 
 """ terra = pygame.image.load("sprites/terra.webp")
  self.tile_list = []
