@@ -18,6 +18,7 @@ pygame.display.set_caption(constantes.TITULO_JOGO)
 tela = pygame.display.set_mode((constantes.LARGURA, constantes.ALTURA))
 
 tile_size = 20
+total_vidas = 3
 
 # mapa do jogo
 mapa = [
@@ -146,10 +147,13 @@ def Menu():
 
 # faz os osbtáculos, constrói os mapas e personagem
 class Labirinto():
-    def __init__(self, data, bloco, tile_size, imagem):
+    def __init__(self, data, bloco, tile_size, imagem, canhao, bola, total_vidas):
     # criando o labirinto
         self.bloco = bloco
         self.mapa = imagem
+        self.canhao = canhao
+        self.bola = bola
+        self.total_vidas = total_vidas
         self.tile_list = []
         row_count = 0
         for row in data:
@@ -207,6 +211,27 @@ class Labirinto():
         if buraco_negro.rect.colliderect(anne.rect):
             anne.rect.x = 550
             anne.rect.y = 120
+
+    def canhaoAtira(self):
+        self.canhao.draw()
+        self.bola.draw()
+        if self.bola.rect.y < constantes.ALTURA:
+            self.bola.rect.y += 1 
+        else:
+            self.bola.rect.y = 260
+    
+    def imprimirVidas(self):
+        fonte = pygame.font.SysFont("Times New Roman", 40, True, True)
+        mensagem = f"Vidas: {self.total_vidas}" #string formatada
+        texto_formatado = fonte.render(mensagem, True, (255, 255, 255))
+        tela.blit(texto_formatado, (300, 0))
+
+    
+    def perdeu(self):
+        self.imprimirVidas()
+        if self.bola.rect.colliderect(anne.rect):
+            self.total_vidas -= 0.1
+
     
     def paused(self):
         pause = True
@@ -223,18 +248,21 @@ class Labirinto():
     def reiniciar(self):
         anne.rect.x = 180
         anne.rect.y = 80
+        self.bola.rect.y = 260
+        self.total_vidas = 3
 
 
     def jogo(self):
         self.jogando = True
         while self.jogando:
             eventos()
-            tela.fill(constantes.PRETO)
             tela.blit(self.mapa, (0, 0))
             self.draw()
             buraco_negro.draw()
-            anne.update()
             self.colisaoBuraco()
+            self.canhaoAtira()
+            anne.update()
+            self.perdeu()
             if botao_pause.apertar():
                 self.paused()
             if botao_home.apertar():
@@ -251,10 +279,6 @@ class Labirinto():
         self.jogo()
 
 
-# objetos das classes mapas
-tema_galaxia = Labirinto(mapa, sprite.estrela_obstaculo, tile_size, sprite.mapa_galaxia)
-
-
 # criando objetos da classe objetos
 botao_jogar = Objetos(sprite.jogar_img, 250, 180, 1)
 botao_regras = Objetos(sprite.regras_img, 240, 230, 1)
@@ -263,7 +287,12 @@ botao_flecha = Objetos(sprite.flecha_img, 8, 410, 3)
 botao_pause = Objetos(sprite.pause_img, 10, 0, 2)
 botao_home = Objetos(sprite.home_img, 65, 0, 2)
 buraco_negro = Objetos(sprite.buraconegro, 15, 410, 2)
+canhao = Objetos(sprite.canhao_img, 350, 230, 1.5)
+bola_fogo = Objetos(sprite.fogo_img, 360, 260, 1)
 anne = Objetos(sprite.anne_img, 180, 80, 1)
+
+# objetos das classes mapas
+tema_galaxia = Labirinto(mapa, sprite.estrela_obstaculo, tile_size, sprite.mapa_galaxia, canhao, bola_fogo, total_vidas)
 
 """ terra = pygame.image.load("sprites/terra.webp")
  self.tile_list = []
