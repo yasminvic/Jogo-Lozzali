@@ -20,6 +20,8 @@ tela = pygame.display.set_mode((constantes.LARGURA, constantes.ALTURA))
 tile_size = 20
 total_vidas = 3
 
+bolas_group = pygame.sprite.Group()
+
 # mapa do jogo
 mapa = [
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -105,6 +107,27 @@ class Objetos():
         self.draw()
         self.andar()
 
+class Enem(pygame.sprite.Sprite):
+    def __init__(self, image, x,y, scale):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        comp = self.image.get_width()
+        alt = self.image.get_height()
+        self.image = pygame.transform.scale(
+        self.image, (int(comp*scale), int(alt*scale))).convert_alpha()
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.movimento = 1
+        self.cont = 0
+
+    def update(self):
+        self.rect.y += self.movimento
+        self.cont += 1
+        if self.rect.y > constantes.ALTURA - 30:
+            self.rect.y -= self.cont
+            self.cont = 0
+
 
 # fechar a janela
 def eventos():
@@ -177,13 +200,8 @@ class Labirinto():
                     tile = (img, img_rect, 2)
                     self.tile_list.append(tile)
                 if tile == 3:
-                    img = pygame.transform.scale(
-                                self.bola, (tile_size*1.5, tile_size*1.5))
-                    img_rect = img.get_rect()
-                    img_rect.x = col_count * tile_size
-                    img_rect.y = row_count * tile_size
-                    tile = (img, img_rect, 3)
-                    self.tile_list.append(tile)
+                    bolas = Enem(sprite.fogo_img, col_count * tile_size, row_count*tile_size, 1)
+                    bolas_group.add(bolas)
                 col_count += 1
             row_count += 1
     
@@ -191,6 +209,10 @@ class Labirinto():
         # desenhando o labirinto
         for tile in self.tile_list:
             tela.blit(tile[0], tile[1])
+        
+        bolas_group.update()
+        bolas_group.draw(tela)
+        
  
     def collision_teste(self):
         # testando a colisão com os tiles
@@ -243,26 +265,6 @@ class Labirinto():
             self.bola.rect.y += 1 
         else:
             self.bola.rect.y = self.canhao2.rect.y +10"""
-
-        
-    def imprimirVidas(self):
-        fonte = pygame.font.SysFont("Times New Roman", 40, True, True)
-        mensagem = f"Vidas: {self.total_vidas}" #string formatada
-        texto_formatado = fonte.render(mensagem, True, (255, 255, 255))
-        tela.blit(texto_formatado, (300, 0))
-
-    
-    def perdeu(self):
-        self.imprimirVidas()
-        for tile in self.tile_list:
-            if tile[2] == 3:
-                if tile[1].colliderect(anne.rect):
-                    self.total_vidas -= 1
-        if self.total_vidas == 0:
-            self.jogando = False
-        else:
-            pass
- 
     
     def paused(self):
         pause = True
@@ -281,7 +283,6 @@ class Labirinto():
         anne.rect.y = 80
         self.total_vidas = 3
 
-
     def jogo(self):
         self.jogando = True
         while self.jogando:
@@ -289,10 +290,7 @@ class Labirinto():
             tela.blit(self.mapa, (0, 0))
             self.draw()
             buraco_negro.draw()
-            self.colisaoBuraco()
-            self.canhaoAtira()
             anne.update()
-            self.perdeu()
             if botao_pause.apertar():
                 self.paused()
             if botao_home.apertar():
