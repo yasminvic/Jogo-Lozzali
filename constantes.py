@@ -1,3 +1,5 @@
+import pygame
+
 
 #dimensões da tela
 LARGURA = 640
@@ -6,8 +8,15 @@ ALTURA = 480
 #nome do jogo
 TITULO_JOGO = "LOZZALI"
 
+#tela do jogo
+tela = pygame.display.set_mode((LARGURA, ALTURA))
+pygame.display.set_caption(TITULO_JOGO)
+
 #FPS
 FPS = 60
+
+#tamanho dos tiles
+tile_size = 20
 
 #cores
 PRETO = (0,0,0)
