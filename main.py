@@ -1,15 +1,14 @@
 import pygame
 from pygame.locals import *
 
-from objetos import eventos
-from objetos import Menu
-import constantes
 
-relogio = pygame.time.Clock()
+from constantes import FPS, RELOGIO
+from funcoes import eventos, Menu
+
 
 jogar = True
 while jogar:
-    relogio.tick(constantes.FPS)
+    RELOGIO.tick(FPS)
 
     # fechar a janela
     eventos()
@@ -28,6 +27,3 @@ criar um def run que vai ter parametro mapa, onde vamos colocar a imagem de cada
 
 tem que desenhar a anne dentro da classe labirinto
 """
-
-
-
