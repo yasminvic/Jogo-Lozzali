@@ -9,11 +9,12 @@ ALTURA = 480
 TITULO_JOGO = "LOZZALI"
 
 #tela do jogo
-tela = pygame.display.set_mode((LARGURA, ALTURA))
+TELA = pygame.display.set_mode((LARGURA, ALTURA))
 pygame.display.set_caption(TITULO_JOGO)
 
 #FPS
 FPS = 60
+RELOGIO = pygame.time.Clock()
 
 #tamanho dos tiles
 tile_size = 20
@@ -28,4 +29,4 @@ CINZA = (119,136,153)
 BRANCO = (255,255,255)
 
 #velocidade da personagem 
-VELOCIDADE = 1
+VELOCIDADE = 5
