@@ -1,7 +1,7 @@
 import pygame
 
 import sprite
-from objetos import botao_jogar, botao_sair, botao_regras, botao_flecha, tema_galaxia
+import objetos
 from constantes import TELA, FPS, RELOGIO
 
 
@@ -21,11 +21,11 @@ def Menu():
     # verifica se é o menu principal
     if menu_state == "main":
     # draw screen buttons
-        if botao_jogar.apertar():
-            tema_galaxia.update()
-        if botao_regras.apertar():
+        if objetos.botao_jogar.apertar():
+            objetos.tema_galaxia.update()
+        if objetos.botao_regras.apertar():
             menu_state = "options"
-        if botao_sair.apertar():
+        if objetos.botao_sair.apertar():
             pygame.quit()
             exit()
     # check if the options menu is open
@@ -39,7 +39,7 @@ def Menu():
             TELA.fill((0, 0, 0))
             eventos()
             # desenha e verifica se o botão foi apertado
-            if botao_flecha.apertar():
+            if objetos.botao_flecha.apertar():
             # volta para o menu principal
                 menu_state = "main"
                 tela_regras = False
