@@ -2,11 +2,13 @@ import pygame
 from pygame.locals import *
 import os # importar os diretórios
 from sys import exit
+from math import sin #retorna o seno do valor passado
 
 import sprite
 import funcoes
 from constantes import *
 from inimigo import Enemy
+from coracao import Coracoes
 
 
 pygame.init()
@@ -17,14 +19,12 @@ diretorio_main = os.path.dirname(__file__)
 diretorio_sprites = os.path.join(diretorio_main, "sprites")
 
 
-
-total_vidas = 6
-
 bolas_group = pygame.sprite.Group()
+coracao_group = pygame.sprite.Group()
 
 # mapa do jogo
 mapa = [
- [0, 5, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 4, 0, 4, 0, 0, 0],
+ [0, 5, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
  [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
@@ -54,17 +54,32 @@ mapa = [
 class Objeto():
     def __init__(self, image, x, y, scale):
         self.imagem = image
-        comp = self.imagem.get_width()
+        self.comp = self.imagem.get_width()
         alt = self.imagem.get_height()
         self.imagem = pygame.transform.scale(
-                        self.imagem, (int(comp*scale), int(alt*scale))).convert_alpha()
+                        self.imagem, (int(self.comp*scale), int(alt*scale))).convert_alpha()
         self.rect = self.imagem.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.cliquei = False
 
+        #variáveis que controlam a invencibilidade 
+        self.invencibilidade = False
+        self.invencibilidade_duracao = 400
+        self.hurt_time = 0
+
+        #controla a vida da personagem
+        self.total_vidas = 3
+
     def draw(self):
+        if self.invencibilidade: #se invencibilidade for True:
+            alpha = self.invisivel()
+            self.imagem.set_alpha(alpha) #define a transparência
+        else:
+            self.imagem.set_alpha(255)
+
         TELA.blit(self.imagem, (self.rect.x, self.rect.y))
+
 
     def apertar(self):
         TELA.blit(self.imagem, (self.rect.x, self.rect.y))
@@ -103,29 +118,53 @@ class Objeto():
         self.rect.x += self.valor_x
         self.rect.y += self.valor_y
 
+    def colisao_inimigo(self):
+        if not self.invencibilidade: #se a invencibilidade for not true:
+            self.total_vidas -= 1 #perde uma vida
+            print(self.total_vidas)
+            self.invencibilidade = True #invencibilidade vira True
+            self.hurt_time = pygame.time.get_ticks() #armazena o momento exato da colisão
+            #pygame.time.get_ticks() retorna o número de milissegundos desde que pygame.init() foi chamado
+    
+    def invencibilidade_timer(self):
+        if self.invencibilidade: #se invencibilidade for True:
+            timer_atual = pygame.time.get_ticks() #armazena o momento atual
+            #se a diferença entre o momento atual o quando colidiu for maior que o tempo estipulado para duração da invencibilidade:
+            if (timer_atual - self.hurt_time) >= self.invencibilidade_duracao:  
+                self.invencibilidade = False #invencibilidade recebe False
+    
+    def invisivel(self):
+        #variável valor vai oscilar entre positivo e negativo
+        valor = sin(pygame.time.get_ticks())
+        if valor > 0: #se for positivo, não tem transparência
+            return 255
+        else:
+            #se for negativo, tem transparência
+            return 0
+
     def update(self):
         self.draw()
         self.andar()
- 
-    def up(self):
-        self.draw()
-        self.apertar()
-
+        self.invencibilidade_timer()
  
 
 # faz os osbtáculos, constrói os mapas e personagem
 class Labirinto():
-    def __init__(self, data, bloco, tile_size, imagem, total_vidas, canhao, bola, coracao):
+    def __init__(self, data, bloco, tile_size, imagem, canhao, bola, coracao):
     # criando o labirinto
+
+        #variáveis que desenham o mapa
         self.data = data
         self.bloco = bloco
         self.mapa = imagem
         self.canhao = canhao
         self.bola = bola
-        self.total_vidas = total_vidas
+        self.tile_list = []
+
+        #variáveis que controlam a vida
         self.coracao = coracao
         self.vidas = []
-        self.tile_list = []
+
         self.row_count = 0
         for row in self.data:
             self.col_count = 0
@@ -138,13 +177,7 @@ class Labirinto():
                     bolas = Enemy(sprite.fogo_img, self.col_count * tile_size, self.row_count*tile_size, 1, "DOWN")
                     bolas_group.add(bolas)
                 if tile == 4:
-                    img = pygame.transform.scale(
-                    self.coracao, (tile_size*3, tile_size*3))
-                    img_rect = img.get_rect()
-                    img_rect.x = self.col_count * tile_size
-                    img_rect.y = self.row_count * tile_size
-                    vida = (img, img_rect)
-                    self.vidas.append(vida)
+                    pass
                 if tile == 5:
                     self.botao_pause = Objeto(sprite.pause_img, 0,0,2)
                     self.botao_pause.rect.x = self.col_count * tile_size
@@ -170,6 +203,8 @@ class Labirinto():
         for vida in self.vidas:
             TELA.blit(vida[0], vida[1])
         
+        self.perdeVida(anne.total_vidas)
+
         bolas_group.update()
         bolas_group.draw(TELA)
 
@@ -184,17 +219,10 @@ class Labirinto():
         self.tile_list.append(tile)
     
     def colisiao_bolas(self):
+        #se a bola encostar na personagem:
         if pygame.sprite.spritecollide(anne, bolas_group, False):
-            anne.rect.x -= 15
-            anne.rect.y -=5
-            self.total_vidas -= 1
-            if len(self.vidas) != 0:
-                del(self.vidas[0])
-        if self.total_vidas <= 0:
-            return False
-        else:
-            return True
-    
+            anne.colisao_inimigo()
+             
     def collision_teste(self):
         # testando a colisão com os tiles
         # o que estavamos fazendo errado é que estavamos testando a colisão e fazendo colidir tudo junto
@@ -204,6 +232,7 @@ class Labirinto():
             if tile[1].colliderect(anne.rect):
                 collisions.append(tile[1])
         return collisions
+        
 
     def movement_collision(self):
         #realizando a colisão entre as tile e a personagem
@@ -227,6 +256,19 @@ class Labirinto():
             if directiony < 0:
                 anne.rect.top = tile.bottom 
 
+    def perdeVida(self, total_vidas):
+        for vida in range(total_vidas):
+            coracao.rect.x = 500 + coracao.comp * vida
+            coracao.draw()
+
+
+    def morreu(self, total_vidas):
+        if total_vidas <= 0:
+            return False
+        else:
+            return True
+
+
     
     def colisaoBuraco(self):
         #transportando a personagem para o outro lado do mapa
@@ -236,7 +278,7 @@ class Labirinto():
 
     def game_over(self):
         #tela de game over
-        game_over = self.colisiao_bolas()
+        game_over = self.morreu(anne.total_vidas)
         if game_over == False:
             self.jogando = False
             perdeu = True
@@ -245,8 +287,9 @@ class Labirinto():
                 funcoes.eventos()
                 TELA.fill(CINZA)
                 if botao_jogar.apertar():
-                    perdeu = False
                     self.update()
+                    self.jogando = True
+                    perdeu = False
                 if botao_sair.apertar():
                     pygame.quit()
                     exit()
@@ -272,7 +315,7 @@ class Labirinto():
         #reiniciar o jogo
         anne.rect.x = 150
         anne.rect.y = 60
-        self.total_vidas = 6
+        self.total_vidas = 3
         
     def modifica(self):
         #todas as funcões que modificam o jogo
@@ -282,8 +325,9 @@ class Labirinto():
         buraco_negro.draw()
         self.colisaoBuraco()
         anne.update()
-        self.colisiao_bolas()
         self.movement_collision()
+        self.colisiao_bolas()
+        #self.perdeVida(anne.total_vidas)
         self.game_over()
 
 
@@ -314,11 +358,11 @@ botao_regras = Objeto(sprite.regras_img, 240, 230, 1)
 botao_sair = Objeto(sprite.sair_img, 265, 280, 1)
 botao_flecha = Objeto(sprite.flecha_img, 8, 410, 3)
 buraco_negro = Objeto(sprite.buraconegro, 15, 410, 2)
+coracao = Objeto(sprite.coracao_img, 400, 10, 2)
 anne = Objeto(sprite.anne_img, 0, 50, 1)
 
 # objetos das classes mapas
-tema_galaxia = Labirinto(mapa, sprite.estrela_obstaculo, tile_size, sprite.mapa_galaxia, 
-                                                                    total_vidas, 
+tema_galaxia = Labirinto(mapa, sprite.estrela_obstaculo, tile_size, sprite.mapa_galaxia,  
                                                                     sprite.canhao_img, 
                                                                     sprite.fogo_img, 
                                                                     sprite.coracao_img)
