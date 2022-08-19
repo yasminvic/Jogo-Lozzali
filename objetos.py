@@ -8,7 +8,6 @@ import sprite
 import funcoes
 from constantes import *
 from inimigo import Enemy
-from coracao import Coracoes
 
 
 pygame.init()
@@ -288,7 +287,7 @@ class Labirinto():
                 TELA.fill(CINZA)
                 if botao_jogar.apertar():
                     self.update()
-                    self.jogando = True
+                    #self.jogando = True #colocar ou não?
                     perdeu = False
                 if botao_sair.apertar():
                     pygame.quit()
@@ -315,7 +314,7 @@ class Labirinto():
         #reiniciar o jogo
         anne.rect.x = 150
         anne.rect.y = 60
-        self.total_vidas = 3
+        anne.total_vidas = 3
         
     def modifica(self):
         #todas as funcões que modificam o jogo
