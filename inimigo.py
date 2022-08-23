@@ -2,6 +2,7 @@ import pygame
 
 from constantes import ALTURA, LARGURA
 
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, image, x,y, scale, side):
         pygame.sprite.Sprite.__init__(self)
@@ -16,6 +17,15 @@ class Enemy(pygame.sprite.Sprite):
         self.side = side
         self.movimento = 3
         self.cont = 0
+
+    def nada(self):
+        pass
+        if self.side == "DOWN":
+            self.rect.x -= self.cont
+            self.cont = 0
+        if self.side == "LEFT":
+            self.rect.y -= self.cont
+            self.cont = 0
 
     def update(self):
         if self.side == "DOWN":
