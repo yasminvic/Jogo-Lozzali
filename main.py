@@ -3,18 +3,18 @@ from pygame.locals import *
 
 
 from constantes import FPS, RELOGIO
-from funcoes import eventos, Menu
+from funcoes import eventos
+from game import Game
 
-
-jogar = True
-while jogar:
+g = Game()
+while g.running:
     RELOGIO.tick(FPS)
 
     # fechar a janela
     eventos()
 
     # chamando a função que desenha o menu
-    Menu()
+    g.menu()
 
     pygame.display.update()
 
