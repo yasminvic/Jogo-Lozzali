@@ -1,3 +1,4 @@
+from random import randint
 import pygame
 
 
@@ -8,6 +9,7 @@ from constantes import *
 
 
 bolas_group = pygame.sprite.Group()
+chave_group = pygame.sprite.Group()
 
 
 
@@ -41,13 +43,19 @@ mapa = [
 
 # faz os osbtáculos, constrói os mapas e personagem
 class Labirinto():
-    def __init__(self, data, bloco, tile_size, imagem, canhao, bola, coracao):
+    def __init__(self, data, bloco, tile_size, mapa, canhao, bola, coracao):
     # criando o labirinto
+
+
+        #variavel que controla as fases
+        self.naotroca = False
+        self.level = 1
+
 
         #variáveis que desenham o mapa
         self.data = data
         self.bloco = bloco
-        self.mapa = imagem
+        self.mapa = mapa
         self.canhao = canhao
         self.bola = bola
         self.tile_list = []
@@ -55,6 +63,10 @@ class Labirinto():
         #variáveis que controlam a vida
         self.coracao = coracao
 
+        #adiciona chave dentro de um grupo
+        chave_group.add(objetos.chave)
+
+        #desenha os tiles
         self.row_count = 0
         for row in self.data:
             self.col_count = 0
@@ -64,7 +76,7 @@ class Labirinto():
                 if tile == 2:
                     self.__loadImagem(self.canhao, 1.5)
                 if tile == 3:
-                    bolas = Enemy(fogo_img, self.col_count * tile_size, self.row_count*tile_size, 1, "DOWN")
+                    bolas = Enemy(self.bola, self.col_count * tile_size, self.row_count*tile_size, 1, "DOWN")
                     bolas_group.add(bolas)
                 if tile == 4:
                     pass
@@ -72,14 +84,18 @@ class Labirinto():
                     img = pygame.transform.rotate(self.canhao, 90)
                     self.__loadImagem(img, 1.5)
                 if tile == 8:
-                    img_fogo = pygame.transform.rotate(fogo_img, 90)
-                    self.bola = Enemy(img_fogo, self.col_count * tile_size, self.row_count*tile_size, 1, "LEFT")
-                    bolas_group.add(self.bola)
+                    self.bola_rotacionada = pygame.transform.rotate(self.bola, 90)
+                    bolas = Enemy(self.bola_rotacionada, self.col_count * tile_size, self.row_count*tile_size, 1, "LEFT")
+                    bolas_group.add(bolas)
                 self.col_count += 1
             self.row_count += 1
+
     
     def draw(self):
     # desenhando o labirinto
+        
+        TELA.blit(self.mapa, (0,0))
+
         for tile in self.tile_list:
             TELA.blit(tile[0], tile[1])
         
@@ -87,6 +103,8 @@ class Labirinto():
 
         bolas_group.update()
         bolas_group.draw(TELA)
+
+        chave_group.draw(TELA)
 
     def __loadImagem(self, img, scale):
         #redimensionando as imagens e colocando todas em uma lista
@@ -102,7 +120,6 @@ class Labirinto():
         #se a bola encostar na personagem:
         if pygame.sprite.spritecollide(player, enemy, False):
             player.colisao_inimigo()
-            #self.()
              
     def collision_teste(self, player):
         # testando a colisão com os tiles
@@ -155,15 +172,66 @@ class Labirinto():
             player.rect.x = 550
             player.rect.y = 120
 
+    def colisao_chave(self, player, chave):
+        #se a personagem encostar na chave
+        if pygame.sprite.spritecollide(player, chave, False):
+            objetos.chave.rect.x = randint(400, 500)
+            self.level += 1
+            self.tile_list.clear()
+            bolas_group.empty()
+            self.naotroca = False
+            self.MudaFase()
+            self.mudaObjeto()
+            
+    
+    def MudaFase(self):
+        if self.level == 1:
+            self.mapa = mapa_galaxia
+            self.bloco = estrela_obstaculo
+            self.bola = fogo_img
+        if self.level == 2:
+            self.mapa = mapa_natal
+            self.bloco = gelo_obstaculo
+            self.bola = neve_img
+        if self.level >= 3: #mapa fazenda
+            pass
+        if self.level == 4: #metodo ganhou
+            pass
+            
+        
+    def mudaObjeto(self):
+        if not self.naotroca:
+            self.row_count = 0
+            for row in self.data:
+                self.col_count = 0
+                for tile in row:
+                    if tile == 1:
+                        self.__loadImagem(self.bloco, 1)
+                    if tile == 2:
+                        self.__loadImagem(self.canhao, 1.5)
+                    if tile == 3:
+                        bolas = Enemy(self.bola, self.col_count * tile_size, self.row_count*tile_size, 1, "DOWN")
+                        bolas_group.add(bolas)
+                    if tile == 7:
+                        img = pygame.transform.rotate(self.canhao, 90)
+                        self.__loadImagem(img, 1.5)
+                    if tile == 8:
+                        self.bola_rotacionada = pygame.transform.rotate(self.bola, 90)
+                        bolas = Enemy(self.bola_rotacionada, self.col_count * tile_size, self.row_count*tile_size, 1, "LEFT")
+                        bolas_group.add(bolas)
+                    self.col_count += 1
+                self.row_count += 1
+            self.naotroca = True
+
+
     def run(self):
-        TELA.blit(self.mapa, (0,0))
+        self.colisao_chave(objetos.anne, chave_group)
         self.colisaoBuraco(objetos.anne)
         self.movement_collision(objetos.anne)
         self.colisiao_bolas(objetos.anne, bolas_group)
         self.draw()
 
 # objetos das classes mapas
-tema_galaxia = Labirinto(mapa, estrela_obstaculo, tile_size, mapa_galaxia,  
-                                                                    canhao_img, 
+tema_galaxia = Labirinto(mapa, estrela_obstaculo, tile_size,  mapa_galaxia, canhao_img, 
                                                                     fogo_img, 
                                                                     coracao_img)
