@@ -5,6 +5,7 @@ from sprite import *
 import objetos
 from funcoes import *
 import labirinto
+from botao import *
 
 
 
@@ -24,9 +25,9 @@ class Game:
 
             self.modifica()
 
-            if objetos.botao_pause.apertar():
+            if botao_pause.apertar():
                 self.paused()
-            if objetos.botao_home.apertar():
+            if botao_home.apertar():
                 self.reiniciar()
                 self.jogando = False 
             
@@ -38,7 +39,7 @@ class Game:
         labirinto.tema_galaxia.run()
         objetos.buraco_negro.draw()
         objetos.anne.update()
-        #self.perdeVida(anne.total_vidas)
+        objetos.chave.draw()
         self.game_over()
 
     def game_over(self):
@@ -51,12 +52,12 @@ class Game:
                 RELOGIO.tick(FPS)
                 eventos()
                 TELA.fill(CINZA)
-                if objetos.botao_jogar.apertar():
+                if botao_jogar.apertar():
                     self.reiniciar()
                     self.newGame()
                     #self.jogando = True #colocar ou não?
                     perdeu = False
-                if objetos.botao_sair.apertar():
+                if botao_sair.apertar():
                     pygame.quit()
                     exit()
                 pygame.display.flip()
@@ -70,9 +71,9 @@ class Game:
             RELOGIO.tick(FPS)
             eventos()
             TELA.fill(CINZA)
-            if objetos.botao_jogar.apertar():
+            if botao_jogar.apertar():
                 pause = False
-            if objetos.botao_sair.apertar():
+            if botao_sair.apertar():
                 pygame.quit()
                 exit()
             pygame.display.flip()
@@ -90,11 +91,11 @@ class Game:
         # verifica se é o menu principal
         if self.menu_state == "main":
         # draw screen buttons
-            if objetos.botao_jogar.apertar():
+            if botao_jogar.apertar():
                 self.newGame()
-            if objetos.botao_regras.apertar():
+            if botao_regras.apertar():
                 self.menu_state = "options"
-            if objetos.botao_sair.apertar():
+            if botao_sair.apertar():
                 self.running = False
                 pygame.quit()
                 exit()
@@ -112,7 +113,7 @@ class Game:
             TELA.fill((0, 0, 0))
             eventos()
             # desenha e verifica se o botão foi apertado
-            if objetos.botao_flecha.apertar():
+            if botao_flecha.apertar():
             # volta para o menu principal
                 self.menu_state = "main"
                 tela_regras = False
