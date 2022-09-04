@@ -15,28 +15,19 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
         self.side = side
-        self.movimento = 3
+        self.movimento = 4
         self.cont = 0
-
-    def nada(self):
-        pass
-        if self.side == "DOWN":
-            self.rect.x -= self.cont
-            self.cont = 0
-        if self.side == "LEFT":
-            self.rect.y -= self.cont
-            self.cont = 0
 
     def update(self):
         if self.side == "DOWN":
             self.rect.y += self.movimento
-            self.cont += 3
+            self.cont += self.movimento
             if self.rect.y > ALTURA - 30:
                 self.rect.y -= self.cont
                 self.cont = 0
         if self.side == "LEFT":
             self.rect.x += self.movimento
-            self.cont += 3
+            self.cont += self.movimento
             if self.rect.x > LARGURA - 30:
                 self.rect.x -= self.cont
                 self.cont = 0
