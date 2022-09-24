@@ -31,3 +31,9 @@ class Enemy(pygame.sprite.Sprite):
             if self.rect.x > LARGURA - 30:
                 self.rect.x -= self.cont
                 self.cont = 0
+        if self.side == "UP":
+            self.rect.y += self.movimento
+            self.cont += self.movimento
+            if self.rect.y == 0:
+                self.rect.y -= self.cont
+                self.cont = 0    

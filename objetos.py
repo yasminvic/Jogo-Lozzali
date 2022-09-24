@@ -41,9 +41,6 @@ class Objeto(pygame.sprite.Sprite):
         #controla a vida da personagem
         self.total_vidas = 3
 
-        #controla a captura de objetos
-        self.encostavel = False
-
     def draw(self):
         if self.invencibilidade: #se invencibilidade for True:
             alpha = self.invisivel()
@@ -115,5 +112,5 @@ class Objeto(pygame.sprite.Sprite):
 buraco_negro = Objeto(buraconegro, 15, 410, 2)
 chave = Objeto(chave_img, 500, 200, 1)
 coracao = Objeto(coracao_img, 400, 10, 2)
-anne = Objeto(anne_img, 180, 300, 1)
+anne = Objeto(anne_img, 100, 75, 1)
 

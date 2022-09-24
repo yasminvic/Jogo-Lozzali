@@ -26,10 +26,7 @@ class Game:
             self.modifica()
 
             if botao_pause.apertar():
-                self.paused()
-            if botao_home.apertar():
-                self.reiniciar()
-                self.jogando = False 
+                self.paused() 
             
             pygame.display.flip()
 
@@ -51,12 +48,11 @@ class Game:
             while perdeu:
                 RELOGIO.tick(FPS)
                 eventos()
-                TELA.fill(CINZA)
+                TELA.blit(gameOver_img, (0,0))
                 if botao_jogar.apertar():
-                    self.reiniciar()
-                    self.newGame()
-                    #self.jogando = True #colocar ou não?
+                    self.reiniciar(labirinto.tema_galaxia)
                     perdeu = False
+                    self.newGame()
                 if botao_sair.apertar():
                     pygame.quit()
                     exit()
@@ -70,7 +66,7 @@ class Game:
         while pause:
             RELOGIO.tick(FPS)
             eventos()
-            TELA.fill(CINZA)
+            TELA.blit(pauseTela_img, (0,0))
             if botao_jogar.apertar():
                 pause = False
             if botao_sair.apertar():
@@ -78,11 +74,9 @@ class Game:
                 exit()
             pygame.display.flip()
     
-    def reiniciar(self):
+    def reiniciar(self, labirinto):
         #reiniciar o jogo
-        objetos.anne.rect.x = 150
-        objetos.anne.rect.y = 60
-        objetos.anne.total_vidas = 3
+        labirinto.reiniciar_tela(objetos.anne, mapa_galaxia, estrela_obstaculo, fogo_img, MAPA_GALAXIA)
 
     def menu(self):
          # desenha tela de fundo
