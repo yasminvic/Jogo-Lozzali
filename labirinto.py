@@ -1,45 +1,24 @@
 from random import randint
 import pygame
+from pygame.locals import *
+from sys import exit
 
 
 from inimigo import *
 from sprite import *
 import objetos
 from constantes import *
+from palavra import *
+from funcoes import eventos
 
+pygame.mixer.init()
+#pygame.mixer.music.play(-1) 
+barulho_colisao = pygame.mixer.Sound("musica/smw_coin.wav") 
+barulho_colisao.set_volume(0.7) 
 
 bolas_group = pygame.sprite.Group()
 chave_group = pygame.sprite.Group()
-
-
-
-mapa = [
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
- [1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [7, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 1, 0, 0],
- [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, 0, 0],
- [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
- [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 2, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
- [0, 0, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
- [0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0],
- [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0]
-]
-
+missao_group = pygame.sprite.Group()
 
 # faz os osbtáculos, constrói os mapas e personagem
 class Labirinto():
@@ -50,7 +29,8 @@ class Labirinto():
         #variavel que controla as fases
         self.naotroca = False
         self.level = 1
-
+        self.missaoContador = 0
+        self.encostavel = False
 
         #variáveis que desenham o mapa
         self.data = data
@@ -64,7 +44,9 @@ class Labirinto():
         self.coracao = coracao
 
         #adiciona chave dentro de um grupo
-        chave_group.add(objetos.chave)
+        missao_group.add(objetos.chave)
+        missao_group.add(palavra1)
+        missao_group.add(palavra2)
 
         #desenha os tiles
         self.row_count = 0
@@ -104,7 +86,7 @@ class Labirinto():
         bolas_group.update()
         bolas_group.draw(TELA)
 
-        chave_group.draw(TELA)
+        missao_group.draw(TELA)
 
     def __loadImagem(self, img, scale):
         #redimensionando as imagens e colocando todas em uma lista
@@ -159,13 +141,6 @@ class Labirinto():
             objetos.coracao.rect.x = 500 + objetos.coracao.comp * vida
             objetos.coracao.draw()
 
-
-    def morreu(self, total_vidas):
-        if total_vidas <= 0:
-            return False
-        else:
-            return True
-
     def colisaoBuraco(self, player):
         #transportando a personagem para o outro lado do mapa
         if objetos.buraco_negro.rect.colliderect(player.rect):
@@ -173,31 +148,27 @@ class Labirinto():
             player.rect.y = 120
 
     def colisao_chave(self, player, chave):
-        #se a personagem encostar na chave
-        if pygame.sprite.spritecollide(player, chave, False):
-            objetos.chave.rect.x = randint(400, 500)
+        #se a personagem encostar nas palavras ou na chave
+        missao_colisao = pygame.sprite.spritecollide(player, chave, False)
+        if missao_colisao:
+            if not self.encostavel:
+                self.missaoContador += 1
+                for missao in missao_colisao:
+                    barulho_colisao.play()
+                    missao.kill()
+
+        if self.missaoContador == 3:
             self.level += 1
-            self.tile_list.clear()
-            bolas_group.empty()
-            self.naotroca = False
-            self.MudaFase()
-            self.mudaObjeto()
-            
-    
-    def MudaFase(self):
-        if self.level == 1:
-            self.mapa = mapa_galaxia
-            self.bloco = estrela_obstaculo
-            self.bola = fogo_img
+            self.MudaFase(objetos.anne)
+
+        if self.level == 3:
+            self.venceu()
+              
+    def MudaFase(self, player):    
         if self.level == 2:
-            self.mapa = mapa_natal
-            self.bloco = gelo_obstaculo
-            self.bola = neve_img
-        if self.level >= 3: #mapa fazenda
-            pass
-        if self.level == 4: #metodo ganhou
-            pass
-            
+            self.reiniciar_tela(objetos.anne, mapa_natal, gelo_obstaculo, neve_img, MAPA_NATAL)
+            player.rect.x = 7
+            player.rect.y = 70
         
     def mudaObjeto(self):
         if not self.naotroca:
@@ -219,19 +190,72 @@ class Labirinto():
                         self.bola_rotacionada = pygame.transform.rotate(self.bola, 90)
                         bolas = Enemy(self.bola_rotacionada, self.col_count * tile_size, self.row_count*tile_size, 1, "LEFT")
                         bolas_group.add(bolas)
+                    if tile == 4:
+                        img = pygame.transform.rotate(self.canhao, 180)
+                        self.__loadImagem(img, 1.5)
+                    if tile == 5:
+                        self.bola_rotacionada = pygame.transform.rotate(self.bola, 90)
+                        bolas = Enemy(self.bola_rotacionada, self.col_count * tile_size, self.row_count*tile_size, 1, "UP")
+                        bolas_group.add(bolas)
                     self.col_count += 1
                 self.row_count += 1
             self.naotroca = True
 
+    def reiniciar_tela(self, player, mapa, bloco, bola, data):
+        player.rect.x = 100
+        player.rect.y = 75
+        player.total_vidas = 3
+
+        self.mapa = mapa
+        self.bloco = bloco
+        self.bola = bola
+        self.data = data
+        self.tile_list.clear()
+        bolas_group.empty()
+        self.naotroca = False
+        self.mudaObjeto()
+        self.encostavel = False
+        self.missaoContador = 0
+
+        palavra1.rect.x = random.randint(100, 300)
+        palavra1.rect.y = random.randint(50, 300)
+
+        palavra2.rect.x = random.randint(350, 400)
+        palavra2.rect.y = random.randint(350, 450)
+
+        objetos.chave.rect.x = random.randint(100, 500)
+        objetos.chave.rect.y = random.randint(100, 500)
+
+        missao_group.add(palavra1)
+        missao_group.add(palavra2)
+        missao_group.add(objetos.chave)
+
+    def venceu(self):
+        self.running = True
+        while self.running:
+            RELOGIO.tick(FPS)
+            eventos()
+            for event in pygame.event.get():
+                if event.type == KEYDOWN: 
+                    if event.key == K_y:
+                        print("oi")
+                        self.running = False
+                        break;
+
+            TELA.fill(CINZA)
+
+
+            pygame.display.flip()
 
     def run(self):
-        self.colisao_chave(objetos.anne, chave_group)
+        self.colisao_chave(objetos.anne, missao_group)
         self.colisaoBuraco(objetos.anne)
         self.movement_collision(objetos.anne)
         self.colisiao_bolas(objetos.anne, bolas_group)
         self.draw()
+        self.encostavel = False
 
 # objetos das classes mapas
-tema_galaxia = Labirinto(mapa, estrela_obstaculo, tile_size,  mapa_galaxia, canhao_img, 
+tema_galaxia = Labirinto(MAPA_GALAXIA, estrela_obstaculo, tile_size,  mapa_galaxia, canhao_img, 
                                                                     fogo_img, 
                                                                     coracao_img)
