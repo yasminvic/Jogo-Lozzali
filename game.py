@@ -1,5 +1,7 @@
 import pygame
+from pygame.locals import *
 
+from texto import *
 from constantes import *
 from sprite import *
 import objetos
@@ -16,6 +18,7 @@ class Game:
     def __init__(self):
         pygame.init()
         self.running = True
+        
 
     def newGame(self):
         self.run()
@@ -40,6 +43,22 @@ class Game:
         objetos.buraco_negro.draw()
         objetos.anne.update()
         self.game_over()
+        self.venceu()
+    
+    def venceu(self):
+        if labirinto.tema_galaxia.level >= 3:
+            running = True
+            while running:
+                RELOGIO.tick(FPS)
+                eventos()
+                TELA.blit(venceuTela_img, (0,0))
+                if pygame.key.get_pressed()[K_SPACE] and labirinto.tema_galaxia.apertar: 
+                    labirinto.tema_galaxia.apertar = False
+                    self.reiniciar(labirinto.tema_galaxia)
+                    labirinto.tema_galaxia.level = 1
+                    running = False
+                    self.newGame()
+                pygame.display.flip()
 
     def game_over(self):
         #tela de game over     
@@ -89,8 +108,8 @@ class Game:
         if self.menu_state == "main":
         # draw screen buttons
             if botao_jogar.apertar():
-                self.newGame()
                 audio_palavra.play()
+                self.newGame()               
             if botao_regras.apertar():
                 self.menu_state = "options"
             if botao_sair.apertar():
@@ -109,6 +128,16 @@ class Game:
             
             # preenche tudo de preto
             TELA.fill((0, 0, 0))
+
+            TELA.blit(texto_formatado, (100, 15))
+            TELA.blit(texto_formatado2, (150, 65))
+            TELA.blit(texto_formatado3, (150, 115))
+            TELA.blit(texto_formatado4, (150, 165))
+            TELA.blit(texto_formatado5, (150, 215))
+            TELA.blit(texto_formatado6, (100, 285))
+            TELA.blit(texto_formatado7, (150, 335))
+            TELA.blit(texto_formatado8, (150, 385))
+                
             eventos()
             # desenha e verifica se o botão foi apertado
             if botao_flecha.apertar():

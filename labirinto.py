@@ -55,6 +55,9 @@ class Labirinto():
         menu_group.add(palavra2_menu)
         menu_group.add(traco_menu)
 
+        #controla o botao de jogar novamente
+        self.apertar = True
+
         #desenha os tiles
         self.row_count = 0
         for row in self.data:
@@ -282,22 +285,8 @@ class Labirinto():
         audio_palavra = pygame.mixer.Sound(som)
         audio_palavra.play()
 
-        
-
-    def venceu(self):
-        if self.level >= 3:
-            self.running = True
-            while self.running:
-                RELOGIO.tick(FPS)
-                eventos()
-                TELA.blit(venceuTela_img, (0,0))
-                for event in pygame.event.get():
-                    if event.type == KEYDOWN: 
-                        if event.key == K_y:
-                            print("oi")
-                            self.running = False
-                            break;
-                pygame.display.flip()
+        #tornando possivel apertar no botao de jogar novamente
+        self.apertar = True 
 
     def run(self):
         self.colisao_chave(objetos.anne, missao_group)
@@ -305,7 +294,6 @@ class Labirinto():
         self.movement_collision(objetos.anne)
         self.colisiao_bolas(objetos.anne, bolas_group)
         self.draw()
-        self.venceu()
         self.encostavel = False
 
 # objetos das classes mapas

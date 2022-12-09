@@ -17,13 +17,3 @@ while g.running:
     g.menu()
 
     pygame.display.update()
-
-"""
-criar um .py que vai ter o while principal
-dps chamar esse arquivo, em forma de def no main
-criar um def run que vai ter parametro mapa, onde vamos colocar a imagem de cada mapa
-
-
-
-tem que desenhar a anne dentro da classe labirinto
-"""
