@@ -16,15 +16,17 @@ pygame.mixer.init()
 barulho_colisao = pygame.mixer.Sound("musica/smw_coin.wav") 
 barulho_colisao.set_volume(0.7) 
 
+
+
 bolas_group = pygame.sprite.Group()
-chave_group = pygame.sprite.Group()
 missao_group = pygame.sprite.Group()
+menu_group = pygame.sprite.Group()
 
 # faz os osbtáculos, constrói os mapas e personagem
 class Labirinto():
     def __init__(self, data, bloco, tile_size, mapa, canhao, bola, coracao):
     # criando o labirinto
-
+        
 
         #variavel que controla as fases
         self.naotroca = False
@@ -44,9 +46,14 @@ class Labirinto():
         self.coracao = coracao
 
         #adiciona chave dentro de um grupo
-        missao_group.add(objetos.chave)
+        missao_group.add(chave)
         missao_group.add(palavra1)
         missao_group.add(palavra2)
+
+        #add as silabas cinzas ao menu
+        menu_group.add(palavra1_menu)
+        menu_group.add(palavra2_menu)
+        menu_group.add(traco_menu)
 
         #desenha os tiles
         self.row_count = 0
@@ -71,11 +78,12 @@ class Labirinto():
                     bolas_group.add(bolas)
                 self.col_count += 1
             self.row_count += 1
+        
+        
 
     
     def draw(self):
     # desenhando o labirinto
-        
         TELA.blit(self.mapa, (0,0))
 
         for tile in self.tile_list:
@@ -87,6 +95,7 @@ class Labirinto():
         bolas_group.draw(TELA)
 
         missao_group.draw(TELA)
+        menu_group.draw(TELA)
 
     def __loadImagem(self, img, scale):
         #redimensionando as imagens e colocando todas em uma lista
@@ -153,17 +162,30 @@ class Labirinto():
         if missao_colisao:
             if not self.encostavel:
                 self.missaoContador += 1
+                print(f"missao: {self.missaoContador}")
                 for missao in missao_colisao:
                     barulho_colisao.play()
                     missao.kill()
+                    #se o id da silaba tocada for igual ao id da silaba1 no meu
+                    if missao.id == palavra1_menu.id:
+                        #removemos a silaba cinza
+                        palavra1_menu.kill()
+                        #e add a silaba amarela no lugar
+                        palavra1.rect.x = 250
+                        palavra1.rect.y = 10
+                        menu_group.add(palavra1)
+                    if missao.id == palavra2_menu.id:
+                        palavra2_menu.kill()
+                        palavra2.rect.x = 350
+                        palavra2.rect.y = 10
+                        menu_group.add(palavra2)
 
-        if self.missaoContador == 3:
+        if self.missaoContador >= 3:
             self.level += 1
+            print(self.level)
             self.MudaFase(objetos.anne)
-
-        if self.level == 3:
-            self.venceu()
               
+        
     def MudaFase(self, player):    
         if self.level == 2:
             self.reiniciar_tela(objetos.anne, mapa_natal, gelo_obstaculo, neve_img, MAPA_NATAL)
@@ -201,6 +223,7 @@ class Labirinto():
                 self.row_count += 1
             self.naotroca = True
 
+    #quando muda de fase ou reinicia o jogo
     def reiniciar_tela(self, player, mapa, bloco, bola, data):
         player.rect.x = 100
         player.rect.y = 75
@@ -217,35 +240,64 @@ class Labirinto():
         self.encostavel = False
         self.missaoContador = 0
 
+        #mudando a palavra
+        palavraAle = random.randint(0, 8)
+        palavra1.image = lista_silabas[palavraAle][0]
+        palavra2.image = lista_silabas[palavraAle][1]
+
+        #mudando o audio das silabas
+        palavra1.audio = list_sons[palavraAle]
+        palavra2.audio = list_sons[palavraAle]
+
+        #mudando o audio das silabas do menu
+        palavra1_menu.audio = list_sons[palavraAle]
+        palavra2_menu.audio = list_sons[palavraAle]
+
+        #mudando as palavras do menu
+        palavra1_menu.image = lista_silabas_cinza[palavraAle][0]
+        palavra2_menu.image = lista_silabas_cinza[palavraAle][1]
+
+        #mudando as posições (x, y) das silabas
         palavra1.rect.x = random.randint(100, 300)
         palavra1.rect.y = random.randint(50, 300)
 
         palavra2.rect.x = random.randint(350, 400)
         palavra2.rect.y = random.randint(350, 450)
 
-        objetos.chave.rect.x = random.randint(100, 500)
-        objetos.chave.rect.y = random.randint(100, 500)
+        #mudando as posições (x, y) da chave
+        chave.rect.x = random.randint(100, 500)
+        chave.rect.y = random.randint(100, 500)
 
+        #add a palavra e a chave dentro da lista Group
         missao_group.add(palavra1)
         missao_group.add(palavra2)
-        missao_group.add(objetos.chave)
+        missao_group.add(chave)
+
+        #add palavras a lista Group do menu
+        menu_group.add(palavra1_menu)
+        menu_group.add(palavra2_menu)
+
+        #falando a palavra
+        som = palavra1.audio
+        audio_palavra = pygame.mixer.Sound(som)
+        audio_palavra.play()
+
+        
 
     def venceu(self):
-        self.running = True
-        while self.running:
-            RELOGIO.tick(FPS)
-            eventos()
-            for event in pygame.event.get():
-                if event.type == KEYDOWN: 
-                    if event.key == K_y:
-                        print("oi")
-                        self.running = False
-                        break;
-
-            TELA.fill(CINZA)
-
-
-            pygame.display.flip()
+        if self.level >= 3:
+            self.running = True
+            while self.running:
+                RELOGIO.tick(FPS)
+                eventos()
+                TELA.blit(venceuTela_img, (0,0))
+                for event in pygame.event.get():
+                    if event.type == KEYDOWN: 
+                        if event.key == K_y:
+                            print("oi")
+                            self.running = False
+                            break;
+                pygame.display.flip()
 
     def run(self):
         self.colisao_chave(objetos.anne, missao_group)
@@ -253,6 +305,7 @@ class Labirinto():
         self.movement_collision(objetos.anne)
         self.colisiao_bolas(objetos.anne, bolas_group)
         self.draw()
+        self.venceu()
         self.encostavel = False
 
 # objetos das classes mapas

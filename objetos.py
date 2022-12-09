@@ -28,7 +28,6 @@ class Objeto(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.cliquei = False
 
         self.valor_x = 0
         self.valor_y = 0
@@ -110,7 +109,6 @@ class Objeto(pygame.sprite.Sprite):
 
 # criando objetos da classe objetos
 buraco_negro = Objeto(buraconegro, 15, 410, 2)
-chave = Objeto(chave_img, 500, 200, 1)
 coracao = Objeto(coracao_img, 400, 10, 2)
 anne = Objeto(anne_img, 100, 75, 1)
 

@@ -6,8 +6,11 @@ import objetos
 from funcoes import *
 import labirinto
 from botao import *
+from palavra import *
 
-
+#falando a palavra
+som = palavra1.audio
+audio_palavra = pygame.mixer.Sound(som)
 
 class Game:
     def __init__(self):
@@ -36,7 +39,6 @@ class Game:
         labirinto.tema_galaxia.run()
         objetos.buraco_negro.draw()
         objetos.anne.update()
-        objetos.chave.draw()
         self.game_over()
 
     def game_over(self):
@@ -51,6 +53,7 @@ class Game:
                 TELA.blit(gameOver_img, (0,0))
                 if botao_jogar.apertar():
                     self.reiniciar(labirinto.tema_galaxia)
+                    labirinto.tema_galaxia.level = 1
                     perdeu = False
                     self.newGame()
                 if botao_sair.apertar():
@@ -87,6 +90,7 @@ class Game:
         # draw screen buttons
             if botao_jogar.apertar():
                 self.newGame()
+                audio_palavra.play()
             if botao_regras.apertar():
                 self.menu_state = "options"
             if botao_sair.apertar():
