@@ -1,8 +1,7 @@
 import pygame
 
 pygame.init()
-
-fonte = pygame.font.SysFont('arial', 20, True, False)
+fonte = pygame.font.SysFont('arial', 20, True, False) 
 
 mensagem = f"Desenvolvedores: "
 

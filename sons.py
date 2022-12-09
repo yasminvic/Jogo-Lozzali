@@ -10,6 +10,3 @@ list_sons.append("musica/dado_audio.mp3")
 list_sons.append("musica/boca_audio.mp3")
 list_sons.append("musica/fogo_audio.mp3")
 list_sons.append("musica/pipa_audio.mp3")
-
-
-

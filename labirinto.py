@@ -185,7 +185,6 @@ class Labirinto():
 
         if self.missaoContador >= 3:
             self.level += 1
-            print(self.level)
             self.MudaFase(objetos.anne)
               
         
@@ -245,8 +244,11 @@ class Labirinto():
 
         #mudando a palavra
         palavraAle = random.randint(0, 8)
-        palavra1.image = lista_silabas[palavraAle][0]
-        palavra2.image = lista_silabas[palavraAle][1]
+        
+        palavra1.image = pygame.transform.scale(
+                        lista_silabas[palavraAle][0], (int(palavra1.comp*palavra1.scale), int(palavra1.alt*palavra1.scale))).convert_alpha()
+        palavra2.image = pygame.transform.scale(
+                        lista_silabas[palavraAle][1], (int(palavra1.comp*palavra1.scale), int(palavra1.alt*palavra1.scale))).convert_alpha()
 
         #mudando o audio das silabas
         palavra1.audio = list_sons[palavraAle]
@@ -257,8 +259,10 @@ class Labirinto():
         palavra2_menu.audio = list_sons[palavraAle]
 
         #mudando as palavras do menu
-        palavra1_menu.image = lista_silabas_cinza[palavraAle][0]
-        palavra2_menu.image = lista_silabas_cinza[palavraAle][1]
+        palavra1_menu.image = pygame.transform.scale(
+                        lista_silabas_cinza[palavraAle][0], (int(palavra1.comp*palavra1.scale), int(palavra1.alt*palavra1.scale))).convert_alpha()
+        palavra2_menu.image = pygame.transform.scale(
+                        lista_silabas_cinza[palavraAle][1], (int(palavra1.comp*palavra1.scale), int(palavra1.alt*palavra1.scale))).convert_alpha()
 
         #mudando as posições (x, y) das silabas
         palavra1.rect.x = random.randint(100, 300)

@@ -29,8 +29,10 @@ class Game:
         while self.jogando:
             RELOGIO.tick(FPS)
 
+            #todos os metodos 
             self.modifica()
 
+            #botao de pause
             if botao_pause.apertar():
                 self.paused() 
             
@@ -46,15 +48,20 @@ class Game:
         self.venceu()
     
     def venceu(self):
+        #se ele tiver passado de level
         if labirinto.tema_galaxia.level >= 3:
             running = True
+            #abre a tela dizendo que ele ganhou
             while running:
                 RELOGIO.tick(FPS)
                 eventos()
                 TELA.blit(venceuTela_img, (0,0))
+                #se ele pressionar tecla SPACE e estiver habilitado a variavel apertar
                 if pygame.key.get_pressed()[K_SPACE] and labirinto.tema_galaxia.apertar: 
                     labirinto.tema_galaxia.apertar = False
+                    #entao ele reinicia o jogo
                     self.reiniciar(labirinto.tema_galaxia)
+                    #reinicia o level
                     labirinto.tema_galaxia.level = 1
                     running = False
                     self.newGame()
@@ -129,6 +136,7 @@ class Game:
             # preenche tudo de preto
             TELA.fill((0, 0, 0))
 
+            #printando na tela os créditos
             TELA.blit(texto_formatado, (100, 15))
             TELA.blit(texto_formatado2, (150, 65))
             TELA.blit(texto_formatado3, (150, 115))

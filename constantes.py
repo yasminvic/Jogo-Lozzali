@@ -26,7 +26,7 @@ CINZA = (119,136,153)
 BRANCO = (255,255,255)
 
 #velocidade da personagem 
-VELOCIDADE = 6
+VELOCIDADE = 5
 
 #tile map
 MAPA_GALAXIA = [

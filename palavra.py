@@ -13,9 +13,9 @@ class Palavra(pygame.sprite.Sprite):
         self.scale = scale
         self.image = image
         self.comp = self.image.get_width()
-        alt = self.image.get_height()
+        self.alt = self.image.get_height()
         self.image = pygame.transform.scale(
-                        self.image, (int(self.comp*self.scale), int(alt*self.scale))).convert_alpha()
+                        self.image, (int(self.comp*self.scale), int(self.alt*self.scale))).convert_alpha()
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
