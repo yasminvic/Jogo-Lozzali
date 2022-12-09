@@ -11,13 +11,12 @@ from constantes import *
 from palavra import *
 from funcoes import eventos
 
+#inicializando barulho quando pega as sílabas e chave
 pygame.mixer.init()
-#pygame.mixer.music.play(-1) 
 barulho_colisao = pygame.mixer.Sound("musica/smw_coin.wav") 
 barulho_colisao.set_volume(0.7) 
 
-
-
+#inicializando os sprites Group
 bolas_group = pygame.sprite.Group()
 missao_group = pygame.sprite.Group()
 menu_group = pygame.sprite.Group()
@@ -25,8 +24,7 @@ menu_group = pygame.sprite.Group()
 # faz os osbtáculos, constrói os mapas e personagem
 class Labirinto():
     def __init__(self, data, bloco, tile_size, mapa, canhao, bola, coracao):
-    # criando o labirinto
-        
+    # criando o labirinto      
 
         #variavel que controla as fases
         self.naotroca = False
@@ -63,18 +61,21 @@ class Labirinto():
         for row in self.data:
             self.col_count = 0
             for tile in row:
+                #onde for 1 terá as tiles de parede
                 if tile == 1:
                     self.__loadImagem(self.bloco, 1)
+                #onde for 2 terá canhões apontado para baixo
                 if tile == 2:
                     self.__loadImagem(self.canhao, 1.5)
+                #onde 3 terá as bolas de fogo atacando de cima para baixo
                 if tile == 3:
                     bolas = Enemy(self.bola, self.col_count * tile_size, self.row_count*tile_size, 1, "DOWN")
                     bolas_group.add(bolas)
-                if tile == 4:
-                    pass
+                #onde for 7 terá canhões apontando para a direita
                 if tile == 7:
                     img = pygame.transform.rotate(self.canhao, 90)
                     self.__loadImagem(img, 1.5)
+                #onde for 8 terá bolas de fogo atacando da esquerda para direita
                 if tile == 8:
                     self.bola_rotacionada = pygame.transform.rotate(self.bola, 90)
                     bolas = Enemy(self.bola_rotacionada, self.col_count * tile_size, self.row_count*tile_size, 1, "LEFT")
@@ -82,21 +83,22 @@ class Labirinto():
                 self.col_count += 1
             self.row_count += 1
         
-        
-
-    
     def draw(self):
     # desenhando o labirinto
         TELA.blit(self.mapa, (0,0))
 
+        #desenhando os tiles
         for tile in self.tile_list:
             TELA.blit(tile[0], tile[1])
         
+        #desenha as vidas
         self.perdeVida(objetos.anne.total_vidas)
 
+        #desenha as bolas de fogo
         bolas_group.update()
         bolas_group.draw(TELA)
 
+        #desenha as sílabas e a chave
         missao_group.draw(TELA)
         menu_group.draw(TELA)
 
@@ -165,7 +167,6 @@ class Labirinto():
         if missao_colisao:
             if not self.encostavel:
                 self.missaoContador += 1
-                print(f"missao: {self.missaoContador}")
                 for missao in missao_colisao:
                     barulho_colisao.play()
                     missao.kill()
