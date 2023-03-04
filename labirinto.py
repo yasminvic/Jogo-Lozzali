@@ -55,7 +55,7 @@ class Labirinto():
 
         #controla o botao de jogar novamente
         self.apertar = True
-
+        
         #desenha os tiles
         self.row_count = 0
         for row in self.data:

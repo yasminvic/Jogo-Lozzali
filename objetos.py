@@ -53,24 +53,32 @@ class Objeto(pygame.sprite.Sprite):
         # fazendo o personagem andar e fazendo a animação dele
         self.valor_x = 0
         self.valor_y = 0
+        #se clicar na seta esquerda ou na tecla "A"
         if pygame.key.get_pressed()[K_LEFT] or pygame.key.get_pressed()[K_a]:
             if self.rect.x > 0:
                 self.valor_x = -VELOCIDADE
                 self.valor_y = 0
+        #se clicar na seta direita ou na tecla "D"
         if pygame.key.get_pressed()[K_RIGHT] or pygame.key.get_pressed()[K_d]:
             if self.rect.x < (LARGURA - 30):
                 self.valor_x = VELOCIDADE
                 self.valor_y = 0
+        #se clicar na seta para cima ou na tecla "W"
         if pygame.key.get_pressed()[K_UP] or pygame.key.get_pressed()[K_w]:
             if self.rect.y > (ALTURA - 410):
                 self.valor_y = -VELOCIDADE
                 self.valor_x = 0
+        #se clicar na seta para baixo ou na tecla "S"
         if pygame.key.get_pressed()[K_DOWN] or pygame.key.get_pressed()[K_s]:
             if self.rect.y < (ALTURA - 35):
                 self.valor_y = VELOCIDADE
                 self.valor_x = 0
         self.rect.x += self.valor_x
-        self.rect.y += self.valor_y
+        self.rect.y += self.valor_y                     
+
+
+
+        
 
     def colisao_inimigo(self):
         if not self.invencibilidade: #se a invencibilidade for not true:
